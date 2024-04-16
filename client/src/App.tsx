@@ -1,46 +1,42 @@
 import { useEffect, useState } from "react"
-import { socket } from "./socket.ts"
-import ConnectionState from "./components/ConnectionState.tsx"
-import Events from "./components/Events.tsx"
-import ConnectionManager from "./components/ConnectionManager.tsx"
-import MyForm from "./components/MyForm.tsx"
+import { socket } from "./socket"
 
-function App() {
-  const [isConnected, setIsConnected] = useState(socket.connected)
-  const [fooEvents, setFooEvents] = useState([])
+export default function App() {
+  const [value, setValue] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [messages, setMessages] = useState([])
+
+  function handleSubmit(event) {
+    event.preventDefault()
+    if (!value) return
+    socket.timeout(5000).emit("chat message", value, () => setIsLoading(false))
+    setValue("")
+  }
 
   useEffect(() => {
-    function onConnect() {
-      setIsConnected(true)
+    function onChatMessage(msg) {
+      setMessages((prev) => [...prev, msg])
     }
 
-    function onDisconnect() {
-      setIsConnected(false)
-    }
-
-    function onFooEvents(value) {
-      setFooEvents((prev) => [...prev, value])
-    }
-
-    socket.on("connect", onConnect)
-    socket.on("disconnect", onDisconnect)
-    socket.on("foo", onFooEvents)
+    socket.on("chat message", onChatMessage)
 
     return () => {
-      socket.off("connect", onConnect)
-      socket.off("disconnect", onDisconnect)
-      socket.off("foo", onFooEvents)
+      socket.off("chat message", onChatMessage)
     }
   }, [])
 
   return (
     <div>
-      <ConnectionState isConnected={isConnected} />
-      <Events events={fooEvents} />
-      <ConnectionManager />
-      <MyForm />
+      <ul>
+        {messages.map((msg, index) => (
+          <li key={index}>{msg}</li>
+        ))}
+      </ul>
+
+      <form onSubmit={handleSubmit}>
+        <input placeholder="Type in something..." value={value} onChange={(e) => setValue(e.target.value)} />
+        <button disabled={isLoading}>{isLoading ? "Loading..." : "Submit"}</button>
+      </form>
     </div>
   )
 }
-
-export default App
