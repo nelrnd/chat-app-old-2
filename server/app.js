@@ -27,5 +27,12 @@ io.on("connection", (socket) => {
   })
 })
 
+io.on("connection", (socket) => {
+  socket.on("join", (user) => {
+    console.log("User joined: ", user)
+    io.emit("join", user)
+  })
+})
+
 const PORT = process.env.PORT || 5000
 server.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`))
