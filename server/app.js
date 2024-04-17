@@ -1,6 +1,7 @@
 const express = require("express")
 const { createServer } = require("node:http")
 const { Server } = require("socket.io")
+const mongoose = require("mongoose")
 
 const app = express()
 const server = createServer(app)
@@ -9,6 +10,11 @@ const io = new Server(server, {
     origin: "http://localhost:5173",
   },
 })
+
+// connect to database
+const mongoDB = process.env.MONGODB_URL
+const main = async () => mongoose.connect(mongoDB)
+main().catch((err) => console.log(err))
 
 app.get("/", (req, res) => res.send("<h1>Hello World</h1>"))
 
