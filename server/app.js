@@ -1,7 +1,9 @@
+require("dotenv").config()
 const express = require("express")
 const { createServer } = require("node:http")
 const { Server } = require("socket.io")
 const mongoose = require("mongoose")
+const cors = require("cors")
 
 const app = express()
 const server = createServer(app)
@@ -10,6 +12,10 @@ const io = new Server(server, {
     origin: "http://localhost:5173",
   },
 })
+
+app.use(cors())
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 
 // connect to database
 const mongoDB = process.env.MONGODB_URL

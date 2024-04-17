@@ -1,5 +1,23 @@
 import { useEffect, useState } from "react"
 import { socket } from "./socket"
+import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import Login from "./routes/Login"
+import Register from "./routes/Register"
+
+const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+])
+
+export default function App() {
+  return <RouterProvider router={router} />
+}
 /*
 export default function App() {
   const [value, setValue] = useState("")
@@ -40,7 +58,6 @@ export default function App() {
     </div>
   )
 }
-*/
 
 export default function App() {
   const [username, setUsername] = useState("")
@@ -139,3 +156,6 @@ function OnlineUsers({ users }) {
     </aside>
   )
 }
+
+
+*/

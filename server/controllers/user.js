@@ -20,8 +20,10 @@ exports.user_register = async (req, res) => {
 exports.user_login = async (req, res) => {
   const user = await User.findOne({ email: req.body.email })
 
-  if (!user || bcrypt.compareSync(req.body.password, user.password)) {
-    return res.status(400).json({ error: "Invalid credentials " })
+  console.log(bcrypt.compareSync(req.body.password, user.password))
+
+  if (!user || bcrypt.compareSync(req.body.password, user.password) === false) {
+    return res.status(400).json({ message: "Invalid email or password " })
   }
 
   const token = generateToken(user)
