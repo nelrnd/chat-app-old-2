@@ -18,6 +18,10 @@ main().catch((err) => console.log(err))
 
 app.get("/", (req, res) => res.send("<h1>Hello World</h1>"))
 
+// routers
+const userRouter = require("./routes/user")
+app.use("/api/user", userRouter)
+
 io.on("connection", (socket) => {
   console.log("a user connected")
 
